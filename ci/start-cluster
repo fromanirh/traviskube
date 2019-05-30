@@ -59,8 +59,11 @@ _minishift() {
   minishift addons install --defaults
   minishift addons apply admissions-webhook
 
-  # Needed to watch all pods to come up
-  oc login -u system:admin
+  for ix in $(seq 1 10); do
+    sleep 10
+    # Needed to watch all pods to come up
+    oc login -u system:admin && break || :
+  done
 }
 
 _${1:-$DEFAULT_PLATFORM} ${2:-$DEFAULT_CLUSTER_VERSION}
