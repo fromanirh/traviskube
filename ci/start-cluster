@@ -55,6 +55,10 @@ _minishift() {
     --remote-ssh-key $HOME/.ssh/ci_id_rsa \
     $(condarg "--openshift-version=v" $CVER)
 
+  # see https://github.com/minishift/minishift/pull/3044 for details
+  minishift addons install --defaults
+  minishift addons apply admissions-webhook
+
   # Needed to watch all pods to come up
   oc login -u system:admin
 }
