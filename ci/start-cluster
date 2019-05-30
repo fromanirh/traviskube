@@ -4,6 +4,7 @@
 set -e
 
 source $(dirname $(realpath $0))/defaults
+source $(dirname $(realpath $0))/try-oc-login
 
 warn() { echo "WARN: $@" >&2 ; }
 condarg() { [[ -n "$2" ]] && echo "$1$2"; }
@@ -40,8 +41,7 @@ _oc_cluster() {
   oc version
   oc cluster up --skip-registry-check --enable=-router,-sample-templates
 
-  # Needed to watch all pods to come up
-  oc login -u system:admin
+  _try_oc_login
 }
 
 _minishift() {
@@ -59,11 +59,7 @@ _minishift() {
   minishift addons install --defaults
   minishift addons apply admissions-webhook
 
-  for ix in $(seq 1 10); do
-    sleep 10
-    # Needed to watch all pods to come up
-    oc login -u system:admin && break || :
-  done
+  _try_oc_login
 }
 
 _${1:-$DEFAULT_PLATFORM} ${2:-$DEFAULT_CLUSTER_VERSION}

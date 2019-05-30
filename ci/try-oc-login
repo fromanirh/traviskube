@@ -1,0 +1,14 @@
+#!/bin/bash
+# usage: try-oc-login
+
+set -e
+
+source $(dirname $(realpath $0))/defaults
+
+_try_oc_login() {
+  for ix in $(seq 1 10); do
+    # Needed to watch all pods to come up
+    oc login -u system:admin && break || :
+    sleep 10
+  done
+}

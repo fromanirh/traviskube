@@ -4,6 +4,7 @@
 set -e
 
 source $(dirname $(realpath $0))/defaults
+source $(dirname $(realpath $0))/try-oc-login
 
 _enable_software_emulation() {
     kubectl create configmap -n kubevirt kubevirt-config --from-literal debug.useEmulation=true || :
@@ -20,7 +21,7 @@ _kubernetes() {
 _origin() {
   local VER=$1
 
-  oc login -u system:admin
+  _try_oc_login
 
   # Workaround for travis
   oc adm policy add-scc-to-group anyuid system:authenticated
