@@ -44,6 +44,12 @@ _oc_cluster() {
   _try_oc_login
 }
 
+_minishift_addons() {
+  # see https://github.com/minishift/minishift/pull/3044 for details
+  minishift addons install --defaults
+  minishift addons apply admissions-webhook
+}
+
 _minishift() {
   local CVER=$1
 
@@ -55,9 +61,9 @@ _minishift() {
     --remote-ssh-key $HOME/.ssh/ci_id_rsa \
     $(condarg "--openshift-version=v" $CVER)
 
-  # see https://github.com/minishift/minishift/pull/3044 for details
-  minishift addons install --defaults
-  minishift addons apply admissions-webhook
+  if [ -n "${CI_CONFIG_ADMISSION_WEBHOOK}" ]; then
+    _minishift_addons
+  fi
 
   _try_oc_login
 }

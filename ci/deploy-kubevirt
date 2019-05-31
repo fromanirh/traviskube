@@ -7,20 +7,23 @@ source $(dirname $(realpath $0))/defaults
 source $(dirname $(realpath $0))/try-oc-login
 
 _enable_software_emulation() {
-    kubectl create configmap -n kubevirt kubevirt-config --from-literal debug.useEmulation=true || :
+  kubectl create configmap -n kubevirt kubevirt-config --from-literal debug.useEmulation=true || :
 }
 
 _enable_feature_gates() {
-    kubectl patch configmap -n kubevirt kubevirt-config -p '{"data":{"feature-gates": "DataVolumes,SRIOV,LiveMigration,CPUManager"}}'
+  local GATES=$1
+  kubectl patch configmap -n kubevirt kubevirt-config -p '{"data":{"feature-gates": "${GATES}"}}' || :
 }
 
 _kubernetes() {
   local VER=$1
 
-  kubectl apply -f https://github.com/kubevirt/kubevirt/releases/download/$VER/kubevirt-operator.yaml ;
+  kubectl apply -f https://github.com/kubevirt/kubevirt/releases/download/$VER/kubevirt-operator.yaml
   _enable_software_emulation
-  _enable_feature_gates
-  kubectl apply -f https://github.com/kubevirt/kubevirt/releases/download/$VER/kubevirt-cr.yaml ;
+  if [ -n "${CI_CONFIG_FEATURE_GATES}" ]; then
+    _enable_feature_gates ${CI_CONFIG_FEATURE_GATES}
+  fi
+  kubectl apply -f https://github.com/kubevirt/kubevirt/releases/download/$VER/kubevirt-cr.yaml
 }
 
 _origin() {
