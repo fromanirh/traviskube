@@ -52,10 +52,14 @@ _minishift_addons() {
 
 _minishift() {
   local CVER=$1
+  if [ -n "INSECURE_REGISTRY" ]; then
+    REGISTRY_OPTS="--insecure-registry $INSECURE_REGISTRY"
+  fi
 
   minishift version
   minishift start \
     --vm-driver=generic \
+    ${REGISTRY_OPTS} \
     --remote-ipaddress 127.0.0.1 \
     --remote-ssh-user root \
     --remote-ssh-key $HOME/.ssh/ci_id_rsa \
@@ -64,6 +68,8 @@ _minishift() {
   if [ -n "${CI_CONFIG_ADMISSION_WEBHOOK}" ]; then
     _minishift_addons
   fi
+
+  minishift config view
 
   _try_oc_login
 }
