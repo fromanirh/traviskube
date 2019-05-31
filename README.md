@@ -11,7 +11,7 @@ In your repo:
 vi test.sh
 
 # Add the module
-git submodule add --name ci https://github.com/fabiand/traviskube ci/
+git submodule add --name ci https://github.com/fromanirh/traviskube ci/
 pushd ci ; git pull ; popd
 git commit -asm "Add traviskube CI submodule"
 
