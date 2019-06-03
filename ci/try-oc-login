@@ -9,7 +9,7 @@ _try_get_pods() {
   for ix in $(seq 1 10); do
     # Needed to watch all pods to come up
     oc get pods --all-namespaces && break || :
-    sleep 10
+    sleep 5
   done
 }
 
