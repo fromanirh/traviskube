@@ -12,7 +12,7 @@ _enable_software_emulation() {
 
 _enable_feature_gates() {
   local GATES=$1
-  kubectl patch configmap -n kubevirt kubevirt-config -p '{"data":{"feature-gates": "${GATES}"}}' || :
+  kubectl patch configmap -n kubevirt kubevirt-config -p "{\"data\":{\"feature-gates\": \"${GATES}\"}}" || :
 }
 
 _kubernetes() {
