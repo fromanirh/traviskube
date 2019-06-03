@@ -5,6 +5,14 @@ set -e
 
 source $(dirname $(realpath $0))/defaults
 
+_try_get_pods() {
+  for ix in $(seq 1 10); do
+    # Needed to watch all pods to come up
+    oc get pods --all-namespaces && break || :
+    sleep 10
+  done
+}
+
 _try_oc_login() {
   for ix in $(seq 1 10); do
     # Needed to watch all pods to come up

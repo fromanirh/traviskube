@@ -63,9 +63,14 @@ _minishift() {
 
   if [ -n "${CI_CONFIG_ADMISSION_WEBHOOK}" ]; then
     _minishift_addons
-  fi
+    sleep 20
 
-  minishift config view
+    minishift config view
+
+    _try_get_pods
+  else
+    minishift config view
+  fi
 
   _try_oc_login
 }
