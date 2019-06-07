@@ -5,6 +5,14 @@ set -e
 
 source $(dirname $(realpath $0))/defaults
 
+_curl() {
+	local auth_opts=""
+	if [ -n "${GITHUB_USER}" ] && [ -n "${GITHUB_TOKEN}" ]; then
+		auth_opts="-u ${GITHUB_USER}:${GITHUB_TOKEN}"
+	fi
+	curl ${auth_opts} -L $@
+}
+
 _cache() {
   local BIN="$1"
   shift 1
@@ -32,14 +40,14 @@ _install_bin() {
 _virtctl() {
   local VER=$1
 
-  _cache virtctl "curl -Lo virtctl \
+  _cache virtctl "_curl -o virtctl \
     https://github.com/kubevirt/kubevirt/releases/download/$VER/virtctl-$VER-linux-amd64"
 
   _install_bin virtctl
 }
 
 _oc() {
-  _cache oc "curl -L \
+  _cache oc "_curl \
     https://github.com/openshift/origin/releases/download/v3.11.0/openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit.tar.gz \
     | tar xz --strip-components=1 openshift-origin-client-tools-v3.11.0-0cbc58b-linux-64bit/oc"
 
@@ -53,14 +61,14 @@ _oc() {
 }
 
 _kubectl() {
-  _cache kubectl "curl -Lo kubectl \
+  _cache kubectl "_curl -o kubectl \
     https://storage.googleapis.com/kubernetes-release/release/v1.14.0/bin/linux/amd64/kubectl"
 
   _install_bin kubectl
 }
 
 _crictl() {
-  _cache crictl "curl -L \
+  _cache crictl "_curl \
     https://github.com/kubernetes-incubator/cri-tools/releases/download/v1.14.0/crictl-v1.14.0-linux-amd64.tar.gz \
     | tar xz crictl"
 
@@ -71,7 +79,7 @@ _minikube() {
   _kubectl
   _crictl
 
-  _cache minikube "curl -Lo minikube \
+  _cache minikube "_curl -o minikube \
     https://storage.googleapis.com/minikube/releases/v1.0.1/minikube-linux-amd64"
 
   _install_bin minikube
@@ -87,7 +95,7 @@ _oc_cluster() {
 
 _minishift() {
   local MVER=1.33.0
-  _cache minishift "curl -L \
+  _cache minishift "_curl \
     https://github.com/minishift/minishift/releases/download/v$MVER/minishift-$MVER-linux-amd64.tgz \
     | tar xz --strip-components=1 minishift-$MVER-linux-amd64/minishift"
 
