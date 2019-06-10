@@ -6,11 +6,13 @@ set -e
 source $(dirname $(realpath $0))/defaults
 
 _curl() {
-	local auth_opts=""
+	# this dupes the baseline "curl" command line, but is simpler
+	# wrt shell quoting/expansion.
 	if [ -n "${GITHUB_TOKEN}" ]; then
-		auth_opts="-H \"Authorization: token ${GITHUB_TOKEN}\""
+		curl -H "Authorization: token ${GITHUB_TOKEN}" -L $@
+	else
+		curl -L $@
 	fi
-	curl ${auth_opts} -L $@
 }
 
 _cache() {
