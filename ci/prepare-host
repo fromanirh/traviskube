@@ -7,8 +7,8 @@ source $(dirname $(realpath $0))/defaults
 
 _curl() {
 	local auth_opts=""
-	if [ -n "${GITHUB_USER}" ] && [ -n "${GITHUB_TOKEN}" ]; then
-		auth_opts="-u ${GITHUB_USER}:${GITHUB_TOKEN}"
+	if [ -n "${GITHUB_TOKEN}" ]; then
+		auth_opts="-H \"Authorization: token ${GITHUB_TOKEN}\""
 	fi
 	curl ${auth_opts} -L $@
 }
