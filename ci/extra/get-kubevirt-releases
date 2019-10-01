@@ -12,10 +12,6 @@ elif [ -f "go.mod" ]; then
 	BUILTIN_VERSION=$( awk ' /.*kubevirt.io\/client.go/ { print $2 }' < go.mod )
 fi
 
-if [ -z "${BUILTIN_VERSION}" ]; then
-	exit 1
-fi
-
 curl --silent -k "https://api.github.com/repos/kubevirt/kubevirt/releases" > releases.json
 $(dirname $(realpath $0))/find-versions.py "${BUILTIN_VERSION}" < releases.json > versionsrc
 

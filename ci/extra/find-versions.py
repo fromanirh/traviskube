@@ -42,29 +42,37 @@ def _find_ver_idx(vers, target):
     return None
 
 
+def _has_arg():
+    return (
+        len(sys.argv) > 1 and
+        sys.argv[1] != ""  # shell invocation artifact
+    )
+
+
 def _main():
-    builtin = Version.from_string(sys.argv[1])
+    builtin = Version.from_string(sys.argv[1]) if _has_arg() else None
     vers = versions(json.load(sys.stdin))
     secondlast = vers[1] if len(vers) >= 1 else vers[0]
     out = {
             'last': vers[0],
             'secondlast': secondlast,
-            'builtin': builtin,
-            'previous': builtin,
-            'following': builtin,
     }
 
-    idx = _find_ver_idx(vers, builtin)
-    if idx is not None or idx < len(builtin):
-        out['previous'] = vers[idx+1]
-    if idx is not None or idx > 1:
-        out['following'] = vers[idx-1]
+    if builtin is not None:
+        out['builtin'] = builtin
+        # set defaults
+        for key in ('previous', 'following',):
+            out[key] = builtin
 
-    print('last=%s\nsecondlast=%s\nfollowing=%s\nbuiltin=%s\nprevious=%s' % (
-          out['last'], out['secondlast'], out['following'], out['builtin'], out['previous']))
+        # TODO: this does extract string match, may lead to surprising results
+        idx = _find_ver_idx(vers, builtin)
+        if idx is not None and idx < len(builtin):
+            out['previous'] = vers[idx+1]
+        if idx is not None and idx > 1:
+            out['following'] = vers[idx-1]
+
+    print("\n".join("%s=%s" % (k, v) for k, v in out.items()))
 
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        sys.exit(2)
     _main()
