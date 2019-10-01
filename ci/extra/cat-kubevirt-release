@@ -1,0 +1,17 @@
+#!/bin/bash
+# usage: cat-kubevirt-release [builtin-version]
+
+set -e
+
+[ ! -f versionsrc ] && exit 1
+
+case "$1" in
+last)
+	awk -F\= '/^last=/ { print $2 }' versionsrc
+	;;
+secondlast)
+	awk -F\= '/^secondlast=/ { print $2 }' versionsrc
+	;;
+*)
+	exit 2
+esac
