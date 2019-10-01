@@ -66,7 +66,7 @@ def _main():
 
         # TODO: this does extract string match, may lead to surprising results
         idx = _find_ver_idx(vers, builtin)
-        if idx is not None and idx < len(builtin):
+        if idx is not None and idx < len(vers):
             out['previous'] = vers[idx+1]
         if idx is not None and idx > 1:
             out['following'] = vers[idx-1]
