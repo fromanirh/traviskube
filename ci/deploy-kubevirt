@@ -1,10 +1,14 @@
 #!/bin/bash
 # usage: deploy-kubevirt (minikube|minishift|oc_cluster) $KUBEVIRT_VERSION
 
-set -e
+set -ex
 
 source $(dirname $(realpath $0))/defaults
 source $(dirname $(realpath $0))/try-oc-login
+
+if [ -z "${DEPLOY_TIMEOUT}" ]; then
+	DEPLOY_TIMEOUT="240s"
+fi
 
 _enable_software_emulation() {
   kubectl create configmap -n kubevirt kubevirt-config --from-literal debug.useEmulation=true || :
@@ -41,7 +45,7 @@ _${CDIST_ON[${1:-$DEFAULT_PLATFORM}]} ${2:-$DEFAULT_KUBEVIRT_VER}
 
 
 (
-  kubectl wait --timeout=240s --for=condition=Ready -n kubevirt kv/kubevirt ;
+  kubectl wait --timeout=${DEPLOY_TIMEOUT} --for=condition=Ready -n kubevirt kv/kubevirt ;
 ) || {
   echo "Something went wrong"
   kubectl describe -n kubevirt kv/kubevirt
