@@ -10,6 +10,11 @@ if [ -z "${DEPLOY_TIMEOUT}" ]; then
 	DEPLOY_TIMEOUT="240s"
 fi
 
+if [ -z "${DEFAULT_KUBEVIRT_VER}" ]; then
+	# if no versionsrc available, DEFAULT_KUBEVIRT_VER will still be ""
+	DEFAULT_KUBEVIRT_VER="$( $(dirname $(realpath $0))/extra/cat-kubevirt-release last )"
+fi
+
 _enable_software_emulation() {
   kubectl create configmap -n kubevirt kubevirt-config --from-literal debug.useEmulation=true || :
 }
