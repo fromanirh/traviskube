@@ -22,8 +22,8 @@ class Version(_version):
 
 
 def versions(data):
-    tags = [ item['tag_name'] for item in data ]
-    versions = [ Version.from_string(tag) for tag in tags]
+    tags = [ item.get('tag_name', '') for item in data ]
+    versions = [ Version.from_string(tag) for tag in tags if tag]
     buckets = {}
     for ver in versions:
         key = (ver.major, ver.minor)
@@ -52,6 +52,9 @@ def _has_arg():
 def _main():
     builtin = Version.from_string(sys.argv[1]) if _has_arg() else None
     vers = versions(json.load(sys.stdin))
+    if not vers:
+        return
+
     secondlast = vers[1] if len(vers) >= 1 else vers[0]
     out = {
             'last': vers[0],

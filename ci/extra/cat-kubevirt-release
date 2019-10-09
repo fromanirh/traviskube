@@ -3,7 +3,7 @@
 
 set -e
 
-[ ! -f versionsrc ] && exit 1
+[ ! -s versionsrc ] && exit 1
 
 case "$1" in
 last)
