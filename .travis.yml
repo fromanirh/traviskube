@@ -9,13 +9,13 @@ branches:
 jobs:
   include:
     - stage: Tests
-      name: "Default (minikube with latest k8s)"
+      name: "minishift (latest okd)"
+      env: CPLATFORM=minishift
 
     - name: "oc cluster (latest okd)"
       env: CPLATFORM=oc_cluster
 
-    - name: "minishift (latest okd)"
-      env: CPLATFORM=minishift
+      #    - name: "Default (minikube with latest k8s)"
 
 cache:
   directories:
