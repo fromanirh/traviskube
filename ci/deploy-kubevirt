@@ -49,8 +49,9 @@ _origin() {
 _${CDIST_ON[${1:-$DEFAULT_PLATFORM}]} ${2:-$DEFAULT_KUBEVIRT_VER}
 
 
+WAIT_CONDITION=$( $(dirname $(realpath $0))/extra/get-wait-condition.py ${2:-$DEFAULT_KUBEVIRT_VER} )
 (
-  kubectl wait --timeout=${DEPLOY_TIMEOUT} --for=condition=Available -n kubevirt kv/kubevirt ;
+  kubectl wait --timeout=${DEPLOY_TIMEOUT} --for=condition=${WAIT_CONDITION} -n kubevirt kv/kubevirt ;
 ) || {
   echo "Something went wrong"
   kubectl describe -n kubevirt kv/kubevirt
