@@ -10,9 +10,9 @@ elif [ -f "go.mod" ]; then
 fi
 
 if [ -n "${GITHUB_TOKEN}" ]; then
-	curl -H "Authorization: token ${GITHUB_TOKEN}" --silent -k "https://api.github.com/repos/kubevirt/kubevirt/releases" > releases.json
+	curl -fH "Authorization: token ${GITHUB_TOKEN}" --silent -k "https://api.github.com/repos/kubevirt/kubevirt/releases" > releases.json
 else
-	curl --silent -k "https://api.github.com/repos/kubevirt/kubevirt/releases" > releases.json
+	curl --silent -fk "https://api.github.com/repos/kubevirt/kubevirt/releases" > releases.json
 fi
 
 $(dirname $(realpath $0))/find-versions.py "${BUILTIN_VERSION}" < releases.json > versionsrc
