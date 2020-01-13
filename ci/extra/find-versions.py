@@ -5,7 +5,7 @@ import sys
 import json
 
 
-_version = collections.namedtuple('_version', ['major', 'minor', 'micro'])
+_version = collections.namedtuple('_version', ['major', 'minor', 'micro', 'pre_release'])
 
 
 class Version(_version):
@@ -13,11 +13,18 @@ class Version(_version):
     @classmethod
     def from_string(cls, text):
         text = text.lstrip("v")
-        text = text.split("-")[0]  # TODO: handle '-extra'?
+        text_split = text.split("-")
+        text = text_split[0]
+        pre_release = ""
+        if len(text_split) > 1:
+            pre_release = text_split[1]        
         major, minor, micro = text.split('.')
-        return cls(int(major), int(minor), int(micro))
+        return cls(int(major), int(minor), int(micro), pre_release)
 
     def __str__(self):
+        if self.pre_release: 
+            return "v%d.%d.%d-%s" % (self.major, self.minor, self.micro, self.pre_release)
+
         return "v%d.%d.%d" % (self.major, self.minor, self.micro)
 
 
